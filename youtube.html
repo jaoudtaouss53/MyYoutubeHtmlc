@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyTube - Your Video Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #0f0f0f;
+            color: #fff;
+        }
+
+        /* Header */
+        .header {
+            background-color: #0f0f0f;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 56px;
+            border-bottom: 1px solid #3c3c3c;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: #ff0000;
+            cursor: pointer;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            max-width: 600px;
+            margin: 0 40px;
+        }
+
+        .search-box {
+            flex: 1;
+            height: 40px;
+            background-color: #121212;
+            border: 1px solid #3c3c3c;
+            border-radius: 20px 0 0 20px;
+            padding: 0 16px;
+            color: #fff;
+            outline: none;
+        }
+
+        .search-btn {
+            height: 40px;
+            width: 64px;
+            background-color: #3c3c3c;
+            border: 1px solid #3c3c3c;
+            border-radius: 0 20px 20px 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        .upload-btn {
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-right: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .upload-btn:hover {
+            background-color: #cc0000;
+        }
+
+        .user-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background-color: #3c3c3c;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 56px;
+            width: 240px;
+            height: calc(100vh - 56px);
+            background-color: #0f0f0f;
+            padding: 12px 0;
+            overflow-y: auto;
+            border-right: 1px solid #3c3c3c;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 24px;
+            cursor: pointer;
+            text-decoration: none;
+            color: #fff;
+            gap: 24px;
+        }
+
+        .sidebar-item:hover {
+            background-color: #3c3c3c;
+        }
+
+        .sidebar-item.active {
+            background-color: #3c3c3c;
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background-color: #3c3c3c;
+            margin: 12px 0;
+        }
+
+        /* Upload Modal */
+        .upload-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .upload-content {
+            background-color: #181818;
+            padding: 32px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .upload-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .upload-title {
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-weight: 500;
+        }
+
+        input, textarea, select {
+            background-color: #121212;
+            border: 1px solid #3c3c3c;
+            border-radius: 8px;
+            padding: 12px;
+            color: #fff;
+            outline: none;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: #ff0000;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .file-upload {
+            border: 2px dashed #3c3c3c;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: #ff0000;
+        }
+
+        .file-upload.drag-over {
+            border-color: #ff0000;
+            background-color: rgba(255, 0, 0, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: #ff0000;
+        }
+
+        .submit-btn {
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .submit-btn:hover {
+            background-color: #cc0000;
+        }
+
+        .submit-btn:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 240px;
+            margin-top: 56px;
+            padding: 20px;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 500;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .filter-tab {
+            background-color: #3c3c3c;
+            border: none;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .filter-tab.active {
+            background-color: #ff0000;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .video-card {
+            background-color: #181818;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .video-card:hover {
+            transform: scale(1.02);
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            height: 180px;
+            background-color: #000;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-element {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-duration {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background-color: rgba(0,0,0,0.8);
+            padding: 2px 4px;
+            border-radius: 2px;
+            font-size: 12px;
+        }
+
+        .play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0,0,0,0.7);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #fff;
+        }
+
+        .video-info {
+            padding: 12px;
+        }
+
+        .video-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .video-meta {
+            color: #aaa;
+            font-size: 13px;
+        }
+
+        .channel-info {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+        }
+
+        .channel-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .channel-name {
+            color: #aaa;
+            font-size: 13px;
+        }
+
+        /* Video Player Page */
+        .video-page {
+            display: none;
+            margin-left: 240px;
+            margin-top: 56px;
+            padding: 20px;
+        }
+
+        .video-player-container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .main-video {
+            flex: 2;
+        }
+
+        .video-player {
+            width: 100%;
+            height: 500px;
+            background-color: #000;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .video-player video {
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+        }
+
+        .video-details {
+            background-color: #181818;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .video-title-large {
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .video-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .views-date {
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .video-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn:hover {
+            background-color: #3c3c3c;
+        }
+
+        .recommended-videos {
+            flex: 1;
+        }
+
+        .recommended-title {
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #aaa;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background-color: #3c3c3c;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #ff0000;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 72px;
+            }
+            
+            .main-content, .video-page {
+                margin-left: 72px;
+            }
+            
+            .video-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .video-player-container {
+                flex-direction: column;
+            }
+            
+            .upload-content {
+                width: 95%;
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo" onclick="showHome()">
+            📺 MyTube
+        </div>
+        <div class="search-container">
+            <input type="text" class="search-box" placeholder="Search videos..." id="searchBox">
+            <button class="search-btn" onclick="searchVideos()">🔍</button>
+        </div>
+        <div class="user-controls">
+            <button class="upload-btn" onclick="openUploadModal()">
+                📹 Upload
+            </button>
+            <button class="btn">🔔</button>
+            <button class="btn">👤</button>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <a href="#" class="sidebar-item active" onclick="showHome()">
+            <span>🏠</span> Home
+        </a>
+        <a href="#" class="sidebar-item" onclick="showMyVideos()">
+            <span>📹</span> My Videos
+        </a>
+        <a href="#" class="sidebar-item">
+            <span>👍</span> Liked
+        </a>
+        <a href="#" class="sidebar-item">
+            <span>⏰</span> Watch Later
+        </a>
+        <div class="sidebar-divider"></div>
+        <a href="#" class="sidebar-item">
+            <span>🎵</span> Music
+        </a>
+        <a href="#" class="sidebar-item">
+            <span>🎮</span> Gaming
+        </a>
+        <a href="#" class="sidebar-item">
+            <span>📚</span> Education
+        </a>
+    </div>
+
+    <!-- Upload Modal -->
+    <div class="upload-modal" id="uploadModal">
+        <div class="upload-content">
+            <div class="upload-header">
+                <div class="upload-title">Upload Video</div>
+                <button class="close-btn" onclick="closeUploadModal()">&times;</button>
+            </div>
+            <form class="upload-form" id="uploadForm">
+                <div class="form-group">
+                    <div class="file-upload" id="fileUpload">
+                        <div class="upload-icon">📹</div>
+                        <div>Click or drag video file here</div>
+                        <div style="font-size: 12px; color: #aaa; margin-top: 8px;">
+                            Supported: MP4, WebM, AVI, MOV
+                        </div>
+                    </div>
+                    <input type="file" id="videoFile" accept="video/*" style="display: none;">
+                    <div class="progress-bar" id="progressBar" style="display: none;">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="videoTitle">Title *</label>
+                    <input type="text" id="videoTitle" required maxlength="100" 
+                           placeholder="Enter video title">
+                </div>
+                
+                <div class="form-group">
+                    <label for="videoDescription">Description</label>
+                    <textarea id="videoDescription" maxlength="1000" 
+                              placeholder="Describe your video"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="videoCategory">Category</label>
+                    <select id="videoCategory">
+                        <option value="entertainment">Entertainment</option>
+                        <option value="education">Education</option>
+                        <option value="music">Music</option>
+                        <option value="gaming">Gaming</option>
+                        <option value="news">News</option>
+                        <option value="sports">Sports</option>
+                        <option value="technology">Technology</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="submit-btn" id="submitBtn" disabled>
+                    Upload Video
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="homeContent">
+        <div class="content-header">
+            <div class="page-title">Home</div>
+        </div>
+        
+        <div class="filter-tabs">
+            <button class="filter-tab active" onclick="filterVideos('all')">All</button>
+            <button class="filter-tab" onclick="filterVideos('recent')">Recent</button>
+            <button class="filter-tab" onclick="filterVideos('popular')">Popular</button>
+        </div>
+        
+        <div class="video-grid" id="videoGrid">
+            <div class="empty-state">
+                <div class="empty-icon">📹</div>
+                <h3>No videos yet</h3>
+                <p>Start by uploading your first video!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Player Page -->
+    <div class="video-page" id="videoPage">
+        <div class="video-player-container">
+            <div class="main-video">
+                <div class="video-player" id="mainPlayer">
+                    <video controls id="currentVideo" style="width: 100%; height: 100%;">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <div class="video-details">
+                    <div class="video-title-large" id="currentVideoTitle">Video Title</div>
+                    <div class="video-stats">
+                        <div class="views-date" id="currentVideoMeta">0 views • Just uploaded</div>
+                        <div class="video-actions">
+                            <button class="action-btn" onclick="likeVideo()">👍 <span id="likeCount">0</span></button>
+                            <button class="action-btn">👎</button>
+                            <button class="action-btn">↗️ Share</button>
+                            <button class="action-btn">💾 Save</button>
+                        </div>
+                    </div>
+                    <div class="channel-info">
+                        <div class="channel-avatar">YU</div>
+                        <div>
+                            <div style="font-weight: 500;">Your Channel</div>
+                            <div class="channel-name">Content Creator</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 16px; color: #ccc;" id="currentVideoDescription">
+                        Video description will appear here...
+                    </div>
+                </div>
+            </div>
+            <div class="recommended-videos">
+                <div class="recommended-title">More Videos</div>
+                <div id="recommendedList">
+                    <!-- Recommended videos will be populated -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Video storage array
+        let videos = [];
+        let currentFilter = 'all';
+        let currentVideoIndex = -1;
+
+        // Initialize the app
+        function init() {
+            loadVideosFromStorage();
+            renderVideos();
+            setupEventListeners();
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            const fileUpload = document.getElementById('fileUpload');
+            const videoFile = document.getElementById('videoFile');
+            const uploadForm = document.getElementById('uploadForm');
+            const searchBox = document.getElementById('searchBox');
+
+            // File upload drag and drop
+            fileUpload.addEventListener('click', () => videoFile.click());
+            fileUpload.addEventListener('dragover', handleDragOver);
+            fileUpload.addEventListener('dragleave', handleDragLeave);
+            fileUpload.addEventListener('drop', handleDrop);
+            
+            videoFile.addEventListener('change', handleFileSelect);
+            uploadForm.addEventListener('submit', handleUpload);
+            
+            // Search functionality
+            searchBox.addEventListener('input', debounce(searchVideos, 300));
+        }
+
+        // File handling functions
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].type.startsWith('video/')) {
+                document.getElementById('videoFile').files = files;
+                handleFileSelect({ target: { files: files } });
+            }
+        }
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('video/')) {
+                document.getElementById('submitBtn').disabled = false;
+                document.querySelector('.file-upload div').textContent = file.name;
+                
+                // Auto-fill title if empty
+                const titleInput = document.getElementById('videoTitle');
+                if (!titleInput.value) {
+                    titleInput.value = file.name.replace(/\.[^/.]+$/, "");
+                }
+            }
+        }
+
+        // Upload video function
+        function handleUpload(e) {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('videoFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a video file');
+                return;
+            }
+
+            const title = document.getElementById('videoTitle').value;
+            const description = document.getElementById('videoDescription').value;
+            const category = document.getElementById('videoCategory').value;
+
+            // Show progress bar
+            const progressBar = document.getElementById('progressBar');
+            const progressFill = document.getElementById('progressFill');
+            progressBar.style.display = 'block';
+
+            // Simulate upload progress
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(progressInterval);
+                    finishUpload();
+                }
+                progressFill.style.width = progress + '%';
+            }, 200);
+
+            function finishUpload() {
+                // Create video URL from file
+                const videoURL = URL.createObjectURL(file);
+                
+                // Create video object
+                const video = {
+                    id: Date.now(),
+                    title: title,
+                    description: description,
+                    category: category,
+                    url: videoURL,
+                    filename: file.name,
+                    uploadDate: new Date(),
+                    views: 0,
+                    likes: 0,
+                    duration: '0:00' // Will be updated when video loads
+                };
+
+                // Add to videos array
+                videos.unshift(video);
+                saveVideosToStorage();
+                
+                // Close modal and refresh
+                closeUploadModal();
+                renderVideos();
+                
+                // Show success message
+                setTimeout(() => {
+                    alert('Video uploaded successfully!');
+                }, 500);
+            }
+        }
+
+        // Video management functions
+        function playVideo(index) {
+            currentVideoIndex = index;
+            const video = videos[index];
+            
+            // Update views
+            video.views++;
+            saveVideosToStorage();
+            
+            // Set up video player
+            const videoElement = document.getElementById('currentVideo');
+            videoElement.src = video.url;
+            
+            // Update video details
+            document.getElementById('currentVideoTitle').textContent = video.title;
+            document.getElementById('currentVideoDescription').textContent = video.description || 'No description available.';
+            document.getElementById('currentVideoMeta').textContent = 
+                `${video.views} views • ${formatDate(video.uploadDate)}`;
+            document.getElementById('likeCount').textContent = video.likes;
+            
+            // Show video page
+            document.getElementById('homeContent').style.display = 'none';
+            document.getElementById('videoPage').style.display = 'block';
+            
+            // Load recommended videos
+            loadRecommendedVideos();
+            
+            // Update video duration when loaded
+            videoElement.addEventListener('loadedmetadata', function() {
+                video.duration = formatDuration(this.duration);
+                saveVideosToStorage();
+                renderVideos();
+            });
+        }
+
+        function likeVideo() {
+            if (currentVideoIndex >= 0) {
+                videos[currentVideoIndex].likes++;
+                document.getElementById('likeCount').textContent = videos[currentVideoIndex].likes;
+                saveVideosToStorage();
+            }
+        }
+
+        function renderVideos() {
+            const videoGrid = document.getElementById('videoGrid');
+            
+            if (videos.length === 0) {
+                videoGrid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📹</div>
+                        <h3>No videos yet</h3>
+                        <p>Start by uploading your first video!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let filteredVideos = filterVideosByCategory();
+            
+            videoGrid.innerHTML = filteredVideos.map((video, index) => `
+                <div class="video-card" onclick="playVideo(${videos.indexOf(video)})">
+                    <div class="video-thumbnail">
+                        <video class="video-element" preload="metadata">
+                            <source src="${video.url}" type="video/mp4">
+                        </video>
+                        <div class="play-overlay">▶️</div>
+                        <div class="video-duration">${video.duration}</div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title">${video.title}</div>
+                        <div class="channel-info">
+                            <div class="channel-avatar">YU</div>
+                            <div>
+                                <div class="channel-name">Your Channel</div>
+                                <div class="video-meta">${video.views} views • ${formatDate(video.uploadDate)}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterVideosByCategory() {
+            switch(currentFilter) {
+                case 'recent':
+                    return [...videos].sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate));
+                case 'popular':
+                    return [...videos].sort((a, b) => b.views - a.views);
+                default:
+                    return videos;
+            }
+        }
+
+        function filterVideos(filter) {
+            currentFilter = filter;
+            
+            // Update active tab
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            renderVideos();
+        }
+
+        function searchVideos() {
+            const query = document.getElementById('searchBox').value.toLowerCase();
+            const videoGrid = document.getElementById('videoGrid');
+            
+            if (!query) {
+                renderVideos();
+                return;
+            }
+
+            const searchResults = videos.filter(video => 
+                video.title.toLowerCase().includes(query) ||
+                video.description.toLowerCase().includes(query) ||
+                video.category.toLowerCase().includes(query)
+            );
+
+            if (searchResults.length === 0) {
+                videoGrid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <h3>No results found</h3>
+                        <p>Try different keywords</p>
+                    </div>
+                `;
+                return;
+            }
+
+            videoGrid.innerHTML = searchResults.map((video, index) => `
+                <div class="video-card" onclick="playVideo(${videos.indexOf(video)})">
+                    <div class="video-thumbnail">
+                        <video class="video-element" preload="metadata">
+                            <source src="${video.url}" type="video/mp4">
+                        </video>
+                        <div class="play-overlay">▶️</div>
+                        <div class="video-duration">${video.duration}</div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title">${video.title}</div>
+                        <div class="channel-info">
+                            <div class="channel-avatar">YU</div>
+                            <div>
+                                <div class="channel-name">Your Channel</div>
+                                <div class="video-meta">${video.views} views • ${formatDate(video.uploadDate)}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadRecommendedVideos() {
+            const recommendedList = document.getElementById('recommendedList');
+            const otherVideos = videos.filter((_, index) => index !== currentVideoIndex).slice(0, 5);
+            
+            if (otherVideos.length === 0) {
+                recommendedList.innerHTML = `
+                    <div style="text-align: center; color: #aaa; padding: 20px;">
+                        <div style="font-size: 32px; margin-bottom: 8px;">📹</div>
+                        <div>Upload more videos to see recommendations</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            recommendedList.innerHTML = otherVideos.map((video, index) => `
+                <div class="video-card" onclick="playVideo(${videos.indexOf(video)})" style="margin-bottom: 12px; cursor: pointer;">
+                    <div style="display: flex; gap: 8px;">
+                        <div style="width: 168px; height: 94px; position: relative; background: #000; border-radius: 8px; overflow: hidden;">
+                            <video style="width: 100%; height: 100%; object-fit: cover;" preload="metadata">
+                                <source src="${video.url}" type="video/mp4">
+                            </video>
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 20px;">▶️</div>
+                            <div style="position: absolute; bottom: 4px; right: 4px; background: rgba(0,0,0,0.8); padding: 2px 4px; border-radius: 2px; font-size: 11px;">${video.duration}</div>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px; line-height: 1.3;">${video.title}</div>
+                            <div style="color: #aaa; font-size: 12px; margin-bottom: 2px;">Your Channel</div>
+                            <div style="color: #aaa; font-size: 12px;">${video.views} views • ${formatDate(video.uploadDate)}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Modal functions
+        function openUploadModal() {
+            document.getElementById('uploadModal').style.display = 'flex';
+        }
+
+        function closeUploadModal() {
+            document.getElementById('uploadModal').style.display = 'none';
+            document.getElementById('uploadForm').reset();
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('progressBar').style.display = 'none';
+            document.getElementById('progressFill').style.width = '0%';
+            document.querySelector('.file-upload div').textContent = 'Click or drag video file here';
+        }
+
+        // Navigation functions
+        function showHome() {
+            document.getElementById('homeContent').style.display = 'block';
+            document.getElementById('videoPage').style.display = 'none';
+            document.querySelector('.page-title').textContent = 'Home';
+            
+            // Update active sidebar item
+            updateSidebarActive(0);
+            renderVideos();
+        }
+
+        function showMyVideos() {
+            document.getElementById('homeContent').style.display = 'block';
+            document.getElementById('videoPage').style.display = 'none';
+            document.querySelector('.page-title').textContent = 'My Videos';
+            
+            // Update active sidebar item
+            updateSidebarActive(1);
+            renderVideos();
+        }
+
+        function updateSidebarActive(index) {
+            document.querySelectorAll('.sidebar-item').forEach((item, i) => {
+                item.classList.toggle('active', i === index);
+            });
+        }
+
+        // Storage functions
+        function saveVideosToStorage() {
+            // Note: In a real application, you would save to a database
+            // For this demo, we're using memory storage only
+            // localStorage is not available in Claude artifacts
+        }
+
+        function loadVideosFromStorage() {
+            // Note: In a real application, you would load from a database
+            // For this demo, we start with an empty array
+        }
+
+        // Utility functions
+        function formatDate(date) {
+            const now = new Date();
+            const videoDate = new Date(date);
+            const diffTime = Math.abs(now - videoDate);
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+            const diffMinutes = Math.floor(diffTime / (1000 * 60));
+
+            if (diffMinutes < 60) {
+                return `${diffMinutes} minutes ago`;
+            } else if (diffHours < 24) {
+                return `${diffHours} hours ago`;
+            } else if (diffDays < 7) {
+                return `${diffDays} days ago`;
+            } else if (diffDays < 30) {
+                return `${Math.floor(diffDays / 7)} weeks ago`;
+            } else if (diffDays < 365) {
+                return `${Math.floor(diffDays / 30)} months ago`;
+            } else {
+                return `${Math.floor(diffDays / 365)} years ago`;
+            }
+        }
+
+        function formatDuration(seconds) {
+            const hrs = Math.floor(seconds / 3600);
+            const mins = Math.floor((seconds % 3600) / 60);
+            const secs = Math.floor(seconds % 60);
+            
+            if (hrs > 0) {
+                return `${hrs}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            } else {
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            }
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('uploadModal');
+            if (event.target === modal) {
+                closeUploadModal();
+            }
+        }
+
+        // Initialize the application
+        init();
